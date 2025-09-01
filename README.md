@@ -47,6 +47,29 @@
   - Distributed task processing using Celery
   - Task monitoring through Flower dashboard
 
+## 🚀 Quick Deployment
+
+### Option 1: Railway (Recommended)
+1. Fork this repository
+2. Go to [railway.app](https://railway.app)
+3. Connect your GitHub account
+4. Click "New Project" → "Deploy from GitHub repo"
+5. Select your forked repository
+6. Add environment variables:
+   - `REDIS_HOST=redis://redis:6379/0`
+   - `ENV=production`
+
+### Option 2: Render
+1. Fork this repository
+2. Go to [render.com](https://render.com)
+3. Connect your GitHub account
+4. Click "New" → "Web Service"
+5. Select your repository
+6. Configure as Docker service
+
+### Option 3: VPS Deployment
+See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed VPS setup instructions.
+
 ## Environment Setup (Running Locally)
 
 ### Prerequisites

@@ -7,12 +7,11 @@ services:
     image: converter-cpu-image
     command: poetry run celery -A worker.celery_config worker --pool=solo -n worker_primary --loglevel=info
     volumes:
-      - .:/app
       - model_cache:/tmp
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - ENV=production
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       - redis
 
@@ -33,9 +32,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
       - model_cache:/tmp
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       - redis
 
@@ -44,6 +42,9 @@ services:
     image: redis:7.2.4-alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
 
   flower:
     container_name: flower_cpu
@@ -56,11 +57,11 @@ services:
     ports:
       - "5556:5555"
     volumes:
-      - .:/app
       - model_cache:/tmp
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - ENV=production
+    restart: unless-stopped
     depends_on:
       - app
       - redis
@@ -68,3 +69,4 @@ services:
 
 volumes:
   model_cache:
+  redis_data:
