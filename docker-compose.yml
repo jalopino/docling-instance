@@ -14,8 +14,6 @@ services:
         CPU_ONLY: "true"
     image: converter-cpu-image
     command: poetry run celery -A worker.celery_config worker --pool=solo -n worker_primary --loglevel=info
-    volumes:
-      - model_cache:/tmp
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - ENV=production
@@ -39,8 +37,6 @@ services:
       - PYTHONMALLOC=malloc
     ports:
       - "8080:8080"
-    volumes:
-      - model_cache:/tmp
     restart: unless-stopped
     depends_on:
       - redis
@@ -64,8 +60,6 @@ services:
     command: poetry run celery -A worker.celery_config flower --port=5555
     ports:
       - "5556:5555"
-    volumes:
-      - model_cache:/tmp
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - ENV=production
@@ -76,5 +70,4 @@ services:
       - celery_worker
 
 volumes:
-  model_cache:
   redis_data:
