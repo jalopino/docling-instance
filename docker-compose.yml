@@ -35,8 +35,7 @@ services:
       - MALLOC_ARENA_MAX=2
       - OMP_NUM_THREADS=2
       - PYTHONMALLOC=malloc
-    ports:
-      - "8080:8080"
+    # No external port binding for Traefik
     restart: unless-stopped
     depends_on:
       - redis

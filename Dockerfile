@@ -1,7 +1,7 @@
 # Use a base image with CUDA support and the desired Python version
 FROM python:3.12-slim-bookworm
 
-ARG CPU_ONLY=false
+# CPU-only by default - no need for compose!
 WORKDIR /app
 
 RUN apt-get update \
@@ -17,12 +17,8 @@ COPY pyproject.toml poetry.lock ./
 # Install dependencies before torch
 RUN poetry install --no-interaction --no-root
 
-# Install PyTorch separately based on CPU_ONLY flag
-RUN if [ "$CPU_ONLY" = "true" ]; then \
-    pip install --no-cache-dir torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu; \
-    else \
-    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121; \
-    fi
+# Install PyTorch CPU version (always CPU for simplicity)
+RUN pip install --no-cache-dir torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
 
 ENV HF_HOME=/tmp/ \
     TORCH_HOME=/tmp/ \
@@ -32,7 +28,7 @@ RUN python -c 'from docling.pipeline.standard_pdf_pipeline import StandardPdfPip
 
 # Pre-download EasyOCR models in compatible groups
 RUN python -c 'import easyocr; \
-    reader = easyocr.Reader(["fr", "de", "es", "en", "it", "pt"], gpu=True); \
+    reader = easyocr.Reader(["fr", "de", "es", "en", "it", "pt"], gpu=False); \
     print("EasyOCR models downloaded successfully")'
 
 COPY . .

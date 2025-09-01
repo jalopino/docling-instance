@@ -1,5 +1,5 @@
-# Coolify-specific Docker Compose configuration
-# This removes internal ports that Coolify doesn't need
+# Render.com optimized Docker Compose configuration
+# Includes external port binding for Render's proxy
 
 services:
   app:
@@ -18,9 +18,9 @@ services:
       - PYTHONMALLOC=malloc
     ports:
       - "8080:8080"
-    volumes:
-      - model_cache:/tmp
     restart: unless-stopped
+    depends_on:
+      - redis
 
   celery_worker:
     build:
@@ -29,8 +29,6 @@ services:
         CPU_ONLY: "true"
     image: docling-api:latest
     command: poetry run celery -A worker.celery_config worker --pool=solo -n worker_primary --loglevel=info
-    volumes:
-      - model_cache:/tmp
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - ENV=production
@@ -46,5 +44,4 @@ services:
       - redis_data:/data
 
 volumes:
-  model_cache:
   redis_data:
